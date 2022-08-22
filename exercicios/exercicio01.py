@@ -1,5 +1,6 @@
 import io
 import os
+from copy import copy
 import PySimpleGUI as sg
 import requests
 from PIL import Image
@@ -19,14 +20,15 @@ def main():
             sg.Button('Baixar Imagem')
         ],
         [            
-            sg.Button('Salvar Imagem'), 
+            sg.Button('Salvar Thumbnail'),
+            sg.Button('Salvar Imagem'),
             sg.Combo(['PNG', 'JPEG', 'BMP', 'GIF'], size=(15,1), default_value='PNG', key='-FORMAT-')
         ],
         [sg.Text('', key='-LOG-', text_color= 'yellow')]
     ]
 
     window = sg.Window('Visualizador de Imagem', layout=layout)
-    []
+
     while True:
         event, value = window.read()
 
@@ -34,10 +36,12 @@ def main():
             break
         if event == 'Carregar Imagem':
             load_image(value['-FILE-'], window)
-        if event == 'Salvar Imagem':
-            save_image(value['-FORMAT-'], window)
         if event == 'Baixar Imagem':
             download_image(value['-FILE-'], window)
+        if event == 'Salvar Thumbnail':
+            save_thumbnail(value['-FORMAT-'], window)
+        if event == 'Salvar Imagem':
+            save_image(value['-FORMAT-'], window)
     
     window.close()
 
@@ -46,15 +50,22 @@ def load_image(filename, window):
         image = Image.open(filename)
         show_image(image, window)
         update_log('LOG: IMAGE LOADED', window)
-        return image
     else:
         update_log('ERROR: FILE NOT FOUND', window)
     
+def save_thumbnail(format, window):
+    try:
+        image = copy(currentImage)
+        image.thumbnail((50,50))
+        image.save(f'thumbnail.{get_format_extension(format)}',format=format, optimize=True,quality=75) 
+        update_log('LOG: THUMBNAIL SAVED', window)
+    except:
+        update_log('ERROR: ERROR SAVING THUMBNAIL', window)
+
 def save_image(format, window):
     try:
-        image = currentImage
-        image.thumbnail((50,50))
-        image.save(f'savedImage.{get_format_extension(format)}',format=format, optimize=True,quality=50) 
+        image = copy(currentImage)
+        image.save(f'savedImage.{get_format_extension(format)}',format=format,optimize=True,quality=10) 
         update_log('LOG: IMAGE SAVED', window)
     except:
         update_log('ERROR: ERROR SAVING IMAGE', window)
