@@ -22,7 +22,7 @@ def main():
         [            
             sg.Button('Salvar Thumbnail'),
             sg.Button('Salvar Imagem'),
-            sg.Combo(['PNG', 'JPEG', 'BMP', 'GIF'], size=(15,1), default_value='PNG', key='-FORMAT-')
+            sg.Combo(['PNG', 'JPEG', 'BMP', 'GIF'], default_value='PNG', key='-FORMAT-')
         ],
         [sg.Text('', key='-LOG-', text_color= 'yellow')]
     ]
